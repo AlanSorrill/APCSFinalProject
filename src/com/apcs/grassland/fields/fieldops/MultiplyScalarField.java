@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.apcs.grassland.fieldops;
+package com.apcs.grassland.fields.fieldops;
 
 import com.apcs.grassland.ScalarField;
 
