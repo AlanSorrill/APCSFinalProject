@@ -1,4 +1,4 @@
-package mygame;
+package com.apcs.grassland;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;

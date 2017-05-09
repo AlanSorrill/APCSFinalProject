@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.apcs.grassland.fieldops;
+package com.apcs.grassland.fields.fieldops;
 
 import com.apcs.grassland.ScalarField;
 
@@ -11,19 +11,19 @@ import com.apcs.grassland.ScalarField;
  *
  * @author Alan
  */
-public class AddScalarField extends ScalarField {
+public class SubtractScalarField extends ScalarField {
 
     private ScalarField a;
     private ScalarField b;
 
-    public AddScalarField(ScalarField fa, ScalarField fb) {
+    public SubtractScalarField(ScalarField fa, ScalarField fb) {
         a = fa;
         b = fb;
     }
 
     @Override
     public float getValue(float x, float y, float z) {
-        return a.getValue(x, y, z) + b.getValue(x, y, z);
+        return a.getValue(x, y, z) - b.getValue(x, y, z);
     }
 
 }
