@@ -16,4 +16,13 @@ public abstract class ScalarField {
     }
 
     public abstract float getValue(float x, float y, float z);
+
+    public float[] getCorrectedValueRange() {
+        float[] vr = getValueRange();
+        return new float[]{Math.min(vr[0], vr[1]), Math.max(vr[0], vr[1])};
+    }
+
+    public float[] getValueRange() {
+        return new float[]{0f, 1f};
+    }
 }

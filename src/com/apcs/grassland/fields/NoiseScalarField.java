@@ -10,9 +10,9 @@ import com.flowpowered.noise.module.Module;
 
 /**
  *
- * @author Alan
- * This is an abstract wraper for noise fields. Both PerlinScalarFields and VoronoiScalarFields extend 
- * this class, and allow an easy abstract way to organize noise fields
+ * @author Alan This is an abstract wraper for noise fields. Both
+ * PerlinScalarFields and VoronoiScalarFields extend this class, and allow an
+ * easy abstract way to organize noise fields
  */
 public abstract class NoiseScalarField extends ScalarField {
 
@@ -26,10 +26,14 @@ public abstract class NoiseScalarField extends ScalarField {
     public void setPeriod(float period) {
         this.period = period;
     }
-    
+
     @Override
     public float getValue(float x, float y, float z) {
-        return (float) getModule().getValue(period*x, period*y, period*z);
+        return (float) getModule().getValue(period * x, period * y, period * z);
     }
 
+    @Override
+    public float[] getValueRange() {
+        return new float[]{0, 1.3f}; //To change body of generated methods, choose Tools | Templates.
+    }
 }

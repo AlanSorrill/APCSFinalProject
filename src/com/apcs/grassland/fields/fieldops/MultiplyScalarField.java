@@ -6,6 +6,7 @@
 package com.apcs.grassland.fields.fieldops;
 
 import com.apcs.grassland.ScalarField;
+import com.apcs.grassland.fields.ConstantScalarField;
 
 /**
  *
@@ -21,9 +22,24 @@ public class MultiplyScalarField extends ScalarField {
         b = fb;
     }
 
+    public MultiplyScalarField(ScalarField fa, float fb) {
+        a = fa;
+        b = new ConstantScalarField(fb);
+    }
+
     @Override
     public float getValue(float x, float y, float z) {
         return a.getValue(x, y, z) * b.getValue(x, y, z);
+    }
+
+    @Override
+    public float[] getValueRange() {
+        float[] va = a.getCorrectedValueRange();
+        float[] vb = b.getCorrectedValueRange();
+        if (va[0] == 0 && vb[0] < 0) {
+            va[0] = 1;
+        }
+        return new float[]{va[0] * vb[0], va[1] * vb[1]};
     }
 
 }

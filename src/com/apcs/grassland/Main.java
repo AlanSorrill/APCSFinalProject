@@ -21,6 +21,7 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        WorldData.initWorld(false);
         Box b = new Box(1, 1, 1);
         Geometry geom = new Geometry("Box", b);
 

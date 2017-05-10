@@ -25,7 +25,6 @@ public class ConstantScalarField extends ScalarField {
         this.val = val;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -44,12 +43,17 @@ public class ConstantScalarField extends ScalarField {
         return true;
     }
 
-    
     private float val;
 
     @Override
     public float getValue(float x, float y, float z) {
         return val;
+    }
+
+    @Override
+    public float[] getValueRange() {
+        return new float[]{0-val, val};
+
     }
 
 }
