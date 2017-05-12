@@ -1,12 +1,16 @@
 package com.apcs.grassland.voxel;
 
-import com.jme3.math.Vector4f;
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.scene.Spatial;
+import com.jme3.texture.Texture;
 import java.util.HashMap;
 
 class BlockInfo {
+
     protected String blockName;
     protected String texture;
-    
+
     public BlockInfo(String blockName, String texture) {
         this.blockName = blockName;
         this.texture = texture;
@@ -14,11 +18,14 @@ class BlockInfo {
 }
 
 public class BlockManager {
+
     private static HashMap<String, BlockInfo> blockData;
-    
-    private BlockManager() {}; // Singleton
+
+    private BlockManager() {
+    }
+    ; // Singleton
     private static BlockManager instance;
-    
+
     static private void initBlockData() {
         blockData.put("grass", new BlockInfo("grass", "grass.png"));
         blockData.put("rock", new BlockInfo("rock", "rock.png"));
@@ -31,5 +38,16 @@ public class BlockManager {
         }
 
         return instance;
+    }
+
+    public static Spatial createCube(String texture, AssetManager manager) {
+        Spatial cube = manager.loadModel("Models/block.j3o");
+        Material mat = new Material(manager,
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture tex = manager.loadTexture(
+                "Textures/" + texture);
+        mat.setTexture("ColorMap", tex);
+        cube.setMaterial(mat);
+        return cube;
     }
 }

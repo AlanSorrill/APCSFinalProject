@@ -1,12 +1,16 @@
 package com.apcs.grassland;
 
 import com.apcs.grassland.ground.DynamicMeshTurrain;
+import com.apcs.grassland.voxel.BlockManager;
 import com.jme3.app.SimpleApplication;
 import com.jme3.export.binary.BinaryExporter;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Spatial;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -37,13 +41,16 @@ public class Main extends SimpleApplication {
         sun.setColor(ColorRGBA.White);
         rootNode.addLight(sun);
 
+        
+
         DynamicMeshTurrain tur = new DynamicMeshTurrain(this);
         tur.addLoadedChunk(0, 0);
         tur.addLoadedChunk(-1, 0);
         tur.addLoadedChunk(0, -1);
         tur.addLoadedChunk(-1, -1);
 
-        rootNode.attachChild(tur.getBaseNode());
+        //rootNode.attachChild(tur.getBaseNode());
+        this.getRootNode().attachChild(BlockManager.createCube("grass01.jpg", assetManager));
 
         this.getFlyByCamera().setMoveSpeed(2f);
     }
