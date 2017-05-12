@@ -55,6 +55,7 @@ public class WorldData {
         noise.setFrequency(1);
         return vf;
     }
+    
     //If you want to be able to access a field that is inside of a function or private, place it in this hashmap, and pull it from the visualization tool
     public HashMap<String, ScalarField> exportedFields = new HashMap();
 
