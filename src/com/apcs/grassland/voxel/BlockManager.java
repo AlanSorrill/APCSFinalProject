@@ -3,7 +3,7 @@ package com.apcs.grassland.voxel;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.scene.Spatial;
-import com.jme3.texture.Texture;
+import com.jme3.util.TangentBinormalGenerator;
 import java.util.HashMap;
 
 class BlockInfo {
@@ -27,7 +27,7 @@ public class BlockManager {
     private static BlockManager instance;
 
     static private void initBlockData() {
-        blockData.put("grass", new BlockInfo("grass", "grass.png"));
+        blockData.put("grass", new BlockInfo("grass", "grass01.png"));
         blockData.put("rock", new BlockInfo("rock", "rock.png"));
     }
 
@@ -40,14 +40,12 @@ public class BlockManager {
         return instance;
     }
 
-    public static Spatial createCube(String texture, AssetManager manager) {
+    public static Spatial createCube(String material, AssetManager manager) {
         Spatial cube = manager.loadModel("Models/block.j3o");
-        Material mat = new Material(manager,
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture tex = manager.loadTexture(
-                "Textures/" + texture);
-        mat.setTexture("ColorMap", tex);
+        TangentBinormalGenerator.generate(cube);
+        Material mat = manager.loadMaterial("Materials/"+material);
         cube.setMaterial(mat);
+
         return cube;
     }
 }

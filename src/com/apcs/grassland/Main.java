@@ -50,7 +50,7 @@ public class Main extends SimpleApplication {
         tur.addLoadedChunk(-1, -1);
 
         //rootNode.attachChild(tur.getBaseNode());
-        this.getRootNode().attachChild(BlockManager.createCube("grass01.jpg", assetManager));
+        this.getRootNode().attachChild(BlockManager.createCube("RockMat01.j3m", assetManager));
 
         this.getFlyByCamera().setMoveSpeed(2f);
     }

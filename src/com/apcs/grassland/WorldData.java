@@ -7,6 +7,7 @@ package com.apcs.grassland;
 
 import com.apcs.grassland.fields.PerlinNoiseScalarField;
 import com.apcs.grassland.fields.RangeValueMaskScalarField;
+import com.apcs.grassland.fields.WeightedAverageScalarField;
 import com.apcs.grassland.fields.fieldops.AddScalarField;
 import com.apcs.grassland.fields.fieldops.MultiplyScalarField;
 import com.apcs.grassland.unittests.ScalarFieldVisualization;
@@ -40,6 +41,46 @@ public class WorldData {
     public AddScalarField getHeightMap() {
         return heightmap;
     }
+
+    private WeightedAverageScalarField percipMap = new WeightedAverageScalarField();
+    private WeightedAverageScalarField tempMap = new WeightedAverageScalarField();
+    private WeightedAverageScalarField sedimentMap = new WeightedAverageScalarField();
+    private WeightedAverageScalarField oxigenMap = new WeightedAverageScalarField();
+
+    /**
+     * Helper method to create a new perlin scalar field given a seed
+     *
+     * @param seed seed to inter into new perlin field
+     * @return a new instance of the PerlinNoiseScalarField with the seed set
+     */
+    private static PerlinNoiseScalarField getNewPerlin(int seed) {
+        PerlinNoiseScalarField pnsf = new PerlinNoiseScalarField();
+        Perlin p = pnsf.getPerlin();
+        p.setSeed(seed);
+        return pnsf;
+    }
+
+    private void initPercipMap() {
+        PerlinNoiseScalarField pnsf = getNewPerlin(seed + 2);
+        percipMap.addField(pnsf, 5);
+
+    }
+
+    private void initTempMap() {
+        PerlinNoiseScalarField pnsf = getNewPerlin(seed + 3);
+        percipMap.addField(pnsf, 5);
+    }
+
+    private void intiSedimentMap() {
+        PerlinNoiseScalarField pnsf = getNewPerlin(seed + 4);
+        percipMap.addField(pnsf, 5);
+    }
+
+    private void initOxigenMap() {
+        PerlinNoiseScalarField pnsf = getNewPerlin(seed + 5);
+        percipMap.addField(pnsf, 5);
+    }
+
     private AddScalarField heightmap;
     private PerlinNoiseScalarField heightNoiseBase;
     private int seed = 0;
@@ -55,7 +96,7 @@ public class WorldData {
         noise.setFrequency(1);
         return vf;
     }
-    
+
     //If you want to be able to access a field that is inside of a function or private, place it in this hashmap, and pull it from the visualization tool
     public HashMap<String, ScalarField> exportedFields = new HashMap();
 
@@ -96,6 +137,11 @@ public class WorldData {
         }
 
         heightmap = new AddScalarField(heightFields);
+
+        initPercipMap();
+        initTempMap();
+        intiSedimentMap();
+        initOxigenMap();
     }
 
     //shortcut so you dont have to keep changing into the visualizer file to test your fields

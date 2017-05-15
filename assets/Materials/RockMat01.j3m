@@ -1,0 +1,9 @@
+Material My Material : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        DiffuseMap : Textures/stone01/stone01_diffuse.png
+        SpecularMap : Textures/stone01/stone01_roughness.png
+        NormalMap : Textures/stone01/stone01_normalmap.png
+     }
+    AdditionalRenderState {
+    }
+}
