@@ -23,7 +23,6 @@ import java.util.logging.Logger;
  * @author Alan
  */
 public abstract class DynamicTurrain {
-
     protected Main gameInstance;
 
     public DynamicTurrain(Main game) {
@@ -134,5 +133,4 @@ public abstract class DynamicTurrain {
     public int getRenderDistance() {
         return Integer.parseInt(getTurrainProperties().getProperty("renderDistance"));
     }
-
 }
