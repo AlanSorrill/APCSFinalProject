@@ -2,6 +2,7 @@ package com.apcs.grassland.voxel;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.scene.Spatial;
 import com.jme3.util.TangentBinormalGenerator;
 import java.util.HashMap;
@@ -44,6 +45,9 @@ public class BlockManager {
         Spatial cube = manager.loadModel("Models/block.j3o");
         TangentBinormalGenerator.generate(cube);
         Material mat = manager.loadMaterial("Materials/"+material);
+        if(mat.getParam("AlphaMap")!=null){
+            mat.setBoolean("UseAlpha",true);
+        }
         cube.setMaterial(mat);
 
         return cube;
