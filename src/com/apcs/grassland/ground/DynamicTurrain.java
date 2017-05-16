@@ -6,6 +6,7 @@
 package com.apcs.grassland.ground;
 
 import com.apcs.grassland.Main;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.File;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -33,6 +35,19 @@ public abstract class DynamicTurrain {
 
     public Main getGameInstance() {
         return gameInstance;
+    }
+
+    public void setFocusLocation(Vector3f foc) {
+        loadedChunks.clear();
+        int fx = Math.round(foc.getX());
+        int fy = Math.round(foc.getY());
+        int dist = this.getRenderDistance();
+        for (int x = fx - dist; x < dist * 2; x++) {
+            for (int y = fy - dist; y < dist * 2; y++) {
+                loadedChunks.add(new Integer[]{x,y});
+            }
+        }
+        this.updateChunks();
     }
 
     private void init() {
@@ -88,12 +103,14 @@ public abstract class DynamicTurrain {
                 n = getChunkSpatial(i[0], i[1]);
                 chunks.put(i, n);
                 baseNode.attachChild(n);
-                n.setLocalTranslation(i[0]*chunkSize, 0, i[1]*chunkSize);
+                System.out.println("Attaching chunk " + Arrays.toString(i));
+                n.setLocalTranslation(i[0] * chunkSize, 0, i[1] * chunkSize);
             }
         }
-        for (Integer[] i : chunks.keySet()) {// remove chunks which have been removed
+        for (Integer[] i : chunks.keySet().toArray(new Integer[chunks.size()][])) {// remove chunks which have been removed
             if (!loadedChunks.contains(i)) {
                 chunks.get(i).removeFromParent();
+                System.out.println("Removed chunk " + Arrays.toString(i));
                 loadedChunks.remove(i);
                 chunks.remove(i);
             }
