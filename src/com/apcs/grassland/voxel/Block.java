@@ -5,12 +5,13 @@
  */
 package com.apcs.grassland.voxel;
 
+import com.jme3.scene.Spatial;
+
 /**
  *
  * @author PhillipKobylinski
  */
-public class Block {
-    // All blocks are just an id number in memory, as having many blocks can add up
+public abstract class Block extends Spatial {
     private int blockId;
     
     public Block(int blockId) {
