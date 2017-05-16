@@ -32,7 +32,7 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         WorldData.initWorld(false);
-
+cam.setLocation(new Vector3f(0,5,10));
         /**
          * A white, directional light source
          */
@@ -41,25 +41,25 @@ public class Main extends SimpleApplication {
         sun.setColor(ColorRGBA.White);
         rootNode.addLight(sun);
 
-        
-
-        DynamicMeshTurrain tur = new DynamicMeshTurrain(this);
+        tur = new DynamicMeshTurrain(this);
         tur.addLoadedChunk(0, 0);
         tur.addLoadedChunk(-1, 0);
         tur.addLoadedChunk(0, -1);
-        tur.addLoadedChunk(-1, -1);
+        camLocation = cam.getLocation();
+        tur.setFocusLocation(camLocation);
+        //tur.addLoadedChunk(-1, -1);
 
-        //rootNode.attachChild(tur.getBaseNode());
-        this.getRootNode().attachChild(BlockManager.createCube("RockMat01.j3m", assetManager));
+        getRootNode().attachChild(tur.getBaseNode());
 
         this.getFlyByCamera().setMoveSpeed(2f);
+        
     }
+    private DynamicMeshTurrain tur;
 
     @Override
     public void stop() {
-        String userHome = System.getProperty("user.home");
         BinaryExporter exporter = BinaryExporter.getInstance();
-        File file = new File("assets\\Models\\saves\\MyModel.j3o");
+        File file = new File("assets\\Models\\saves\\SceneSave.j3o");
         System.out.println("Saving to " + file.getAbsolutePath());
         try {
             exporter.save(rootNode, file);
@@ -68,10 +68,14 @@ public class Main extends SimpleApplication {
         }
         super.stop(); // continue quitting the game
     }
+    private Vector3f camLocation = new Vector3f(0,0,0);
 
     @Override
     public void simpleUpdate(float tpf) {
-        //TODO: add update code
+        if(cam.getLocation().distance(camLocation)>tur.getChunkSize()){
+            camLocation = cam.getLocation();
+            tur.setFocusLocation(camLocation);
+        }
     }
 
     @Override
