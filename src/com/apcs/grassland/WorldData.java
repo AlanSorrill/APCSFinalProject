@@ -5,11 +5,13 @@
  */
 package com.apcs.grassland;
 
+import com.apcs.grassland.fields.ConstantScalarField;
 import com.apcs.grassland.fields.PerlinNoiseScalarField;
 import com.apcs.grassland.fields.RangeValueMaskScalarField;
 import com.apcs.grassland.fields.WeightedAverageScalarField;
 import com.apcs.grassland.fields.fieldops.AddScalarField;
 import com.apcs.grassland.fields.fieldops.MultiplyScalarField;
+import com.apcs.grassland.fields.fieldops.SubtractScalarField;
 import com.apcs.grassland.unittests.ScalarFieldVisualization;
 import com.flowpowered.noise.module.source.Perlin;
 import java.util.ArrayList;
@@ -108,8 +110,10 @@ public class WorldData {
         }
         //Create base noise in turrain
         heightNoiseBase = new PerlinNoiseScalarField();
-        heightNoiseBase.setPeriod(0.01f);
+        heightNoiseBase.setPeriod(0.001f);
         heightNoiseBase.getPerlin().setSeed(seed + 1);
+        heightNoiseBase.getPerlin().setFrequency(4);
+        heightNoiseBase.getPerlin().setOctaveCount(8);
 
         //create place to add up all heightmaps from all of the bioms
         ArrayList<ScalarField> heightFields = new ArrayList();
@@ -131,7 +135,7 @@ public class WorldData {
             mask = new RangeValueMaskScalarField(biomField, vlow, vhigh);
 
             //this.exportedFields.put("mask" + i, mask);
-            coeff = new MultiplyScalarField(heightNoiseBase, bioms.get(i).getHeightCoefficient());
+            coeff = new MultiplyScalarField(new MultiplyScalarField(new SubtractScalarField(heightNoiseBase, new ConstantScalarField(0.6f)), 20), bioms.get(i).getHeightCoefficient());
 
             heightFields.add(new MultiplyScalarField(mask, coeff));
         }

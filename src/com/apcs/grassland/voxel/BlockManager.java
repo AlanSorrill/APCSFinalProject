@@ -23,7 +23,7 @@ public class BlockManager {
         TangentBinormalGenerator.generate(cube);
         Material mat = manager.loadMaterial("Materials/" + material);
         cube.setMaterial(mat);
-
+        
         return cube;
     }
 }

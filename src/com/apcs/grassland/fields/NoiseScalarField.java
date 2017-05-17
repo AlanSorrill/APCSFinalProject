@@ -34,6 +34,6 @@ public abstract class NoiseScalarField extends ScalarField {
 
     @Override
     public float[] getValueRange() {
-        return new float[]{0, 1.3f}; //To change body of generated methods, choose Tools | Templates.
+        return new float[]{0.5f, 1.3f}; //To change body of generated methods, choose Tools | Templates.
     }
 }

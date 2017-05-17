@@ -6,6 +6,8 @@
 package com.apcs.grassland.ground;
 
 import com.apcs.grassland.Main;
+import com.apcs.grassland.lazytaskimpls.LT_AddChunk;
+import com.apcs.grassland.lazytaskimpls.LT_RemoveChunk;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -14,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -25,6 +26,7 @@ import java.util.logging.Logger;
  * @author Alan
  */
 public abstract class DynamicTurrain {
+
     protected Main gameInstance;
 
     public DynamicTurrain(Main game) {
@@ -38,20 +40,30 @@ public abstract class DynamicTurrain {
 
     public void setFocusLocation(Vector3f foc) {
         loadedChunks.clear();
-        int fx = Math.round(foc.getX());
-        int fy = Math.round(foc.getY());
+        int fx = Math.round(foc.getX() / this.getChunkSize());
+        int fy = Math.round(foc.getZ() / this.getChunkSize());
         int dist = this.getRenderDistance();
-        for (int x = fx - dist; x < dist * 2; x++) {
-            for (int y = fy - dist; y < dist * 2; y++) {
-                loadedChunks.add(new Integer[]{x,y});
+        int sx = fx - dist;
+        int sy = fy - dist;
+        int width = dist * 2;
+        System.out.println("Setting dturrain foacus location to " + fx + ", " + fy + ". \n"
+                + "Adding chunks (" + sx + "," + sy + ") to (" + (sx + width) + "," + (sy + width) + ")");
+        int total = 0;
+        for (int x = sx; x < sx + width; x++) {
+            for (int y = sy; y < sy + width; y++) {
+                System.out.println("Adding focused chunk " + x + ", " + y);
+                loadedChunks.add(new Integer[]{x, y});
+                total++;
             }
         }
+        System.out.println("Commiting turrain chunk load (" + total + " chunks)");
         this.updateChunks();
     }
 
     private void init() {
         FileInputStream fis = null;
         try {
+            this.baseNode.setName("DynamicTurrain");
             this.turrainProperties = new Properties();
             fis = new FileInputStream(new File("turrainoptions.ops"));
             turrainProperties.load(fis);
@@ -94,31 +106,46 @@ public abstract class DynamicTurrain {
         return -1;
     }
 
+    public static final int CHUNK_UNLOADED = 0, CHUNK_LOADED = 1, CHUNK_LOADING = 2;
+    private ArrayList<ArrayList<Integer>> chunkStates = new ArrayList();
+
+    public int getChunkState(int x, int y) {
+        try {
+            return chunkStates.get(x).get(y);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            setChunkState(x, y, CHUNK_UNLOADED);
+        }
+        return getChunkState(x, y);
+    }
+
+    public void setChunkState(int x, int y, int state) {
+        if (chunkStates.get(x) == null) {
+            chunkStates.set(x, new ArrayList());
+        }
+        chunkStates.get(x).set(y, state);
+    }
+
     private void updateChunks() {
         Spatial n;
         float chunkSize = this.getChunkSize();
         for (Integer[] i : loadedChunks) {// add in new chunks
-            if (!chunks.containsKey(i)) {
-                n = getChunkSpatial(i[0], i[1]);
-                chunks.put(i, n);
-                baseNode.attachChild(n);
-                System.out.println("Attaching chunk " + Arrays.toString(i));
-                n.setLocalTranslation(i[0] * chunkSize, 0, i[1] * chunkSize);
+            if (getChunkState(i[0], i[1]) == CHUNK_UNLOADED) {
+                this.getGameInstance().addLazyTask(new LT_AddChunk(i[0], i[1], this));
             }
         }
-        for (Integer[] i : chunks.keySet().toArray(new Integer[chunks.size()][])) {// remove chunks which have been removed
-            if (!loadedChunks.contains(i)) {
-                chunks.get(i).removeFromParent();
-                System.out.println("Removed chunk " + Arrays.toString(i));
-                loadedChunks.remove(i);
-                chunks.remove(i);
+        for(int x = 0;x<chunkStates.size();x++){
+            for(int y = 0;y<chunkStates.get(x).size();y++){
+                if(getChunkState(x,y)==CHUNK_LOADED && loadedChunks.contains(new Integer[]{x,y})){
+                    getGameInstance().addLazyTask(new LT_RemoveChunk(x, y, this, chunks.get(i)));
+                }
             }
         }
     }
 
     //each chunk identified by int[]{x,y}
     private ArrayList<Integer[]> loadedChunks = new ArrayList();
-    private HashMap<Integer[], Spatial> chunks = new HashMap();
+    public HashMap<Integer[], Spatial> chunks = new HashMap();
     private Node baseNode = new Node();
 
     public Node getBaseNode() {

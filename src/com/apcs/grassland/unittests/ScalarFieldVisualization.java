@@ -58,7 +58,7 @@ public class ScalarFieldVisualization extends JFrame {
 
             @Override
             public void mouseMoved(MouseEvent me) {
-                setTitle("Scalar field test viewer " + field.getValue(me.getX(), me.getY()));
+                setTitle("Scalar field test viewer " + field.getValue(me.getX(), me.getY()) + " at (" + me.getX() + ", " + me.getY() + ")");
             }
         });
     }
