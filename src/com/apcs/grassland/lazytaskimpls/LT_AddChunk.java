@@ -7,9 +7,9 @@ package com.apcs.grassland.lazytaskimpls;
 
 import com.apcs.grassland.LazyTask;
 import com.apcs.grassland.Main;
+import com.apcs.grassland.Vector2i;
 import com.apcs.grassland.ground.DynamicTurrain;
 import com.jme3.scene.Spatial;
-import java.util.Arrays;
 
 /**
  *
@@ -17,43 +17,25 @@ import java.util.Arrays;
  */
 public class LT_AddChunk extends LazyTask {
 
-    private int x;
-    private int y;
+    private Vector2i loc;
     private DynamicTurrain turrain;
 
-    public LT_AddChunk(int x, int y, DynamicTurrain t) {
-        this.x = x;
-        this.y = y;
+    public LT_AddChunk(Vector2i l, DynamicTurrain t) {
+        this.loc = l;
         turrain = t;
-        t.setChunkState(x, y, DynamicTurrain.CHUNK_LOADING);
+        t.setChunkState(loc, DynamicTurrain.CHUNK_LOADING);
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
 
     @Override
     public void lazyExecute(Main m) {
-        Spatial n = turrain.getChunkSpatial(x, y);
-        n.setUserData("xCord", x);
-        n.setUserData("yCoord", y);
-        turrain.chunks.put(new Integer[]{x, y}, n);
+        Spatial n = turrain.getChunkSpatial(loc.getX(),loc.getY());
+        //n.setUserData("loc", loc);
+        turrain.chunks.put(loc, n);
         turrain.getBaseNode().attachChild(n);
-        System.out.println("Attaching chunk " + x + ", " + y);
-        n.setLocalTranslation(x * turrain.getChunkSize(), 0, y * turrain.getChunkSize());
-        turrain.setChunkState(x, y, DynamicTurrain.CHUNK_LOADED);
+        System.out.println("Attaching chunk " + loc.getX() + ", " + loc.getY());
+        n.setLocalTranslation(loc.getX() * turrain.getChunkSize(), 0, loc.getY() * turrain.getChunkSize());
+        turrain.setChunkState(loc, DynamicTurrain.CHUNK_LOADED);
     }
 
 }

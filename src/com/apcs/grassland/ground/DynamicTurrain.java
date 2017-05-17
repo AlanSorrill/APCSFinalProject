@@ -6,6 +6,7 @@
 package com.apcs.grassland.ground;
 
 import com.apcs.grassland.Main;
+import com.apcs.grassland.Vector2i;
 import com.apcs.grassland.lazytaskimpls.LT_AddChunk;
 import com.apcs.grassland.lazytaskimpls.LT_RemoveChunk;
 import com.jme3.math.Vector3f;
@@ -52,7 +53,7 @@ public abstract class DynamicTurrain {
         for (int x = sx; x < sx + width; x++) {
             for (int y = sy; y < sy + width; y++) {
                 System.out.println("Adding focused chunk " + x + ", " + y);
-                loadedChunks.add(new Integer[]{x, y});
+                loadedChunks.add(new Vector2i(x, y));
                 total++;
             }
         }
@@ -82,7 +83,7 @@ public abstract class DynamicTurrain {
 
     //----Loaded chunk logic-----------------------------------------------------------------
     public void addLoadedChunk(int x, int y) {
-        loadedChunks.add(new Integer[]{x, y});
+        loadedChunks.add(new Vector2i(x, y));
         updateChunks();
     }
 
@@ -97,8 +98,8 @@ public abstract class DynamicTurrain {
 
     private int getLoadedChunkIndex(int x, int y) {
         int i = 0;
-        for (Integer[] val : loadedChunks) {
-            if (val[0] == x && val[1] == y) {
+        for (Vector2i val : loadedChunks) {
+            if (val.getX() == x && val.getY() == y) {
                 return i;
             }
             i++;
@@ -107,45 +108,41 @@ public abstract class DynamicTurrain {
     }
 
     public static final int CHUNK_UNLOADED = 0, CHUNK_LOADED = 1, CHUNK_LOADING = 2;
-    private ArrayList<ArrayList<Integer>> chunkStates = new ArrayList();
+    private HashMap<Vector2i, Integer> chunkStates = new HashMap();
 
-    public int getChunkState(int x, int y) {
+    public int getChunkState(Vector2i l) {
         try {
-            return chunkStates.get(x).get(y);
+            return chunkStates.get(l);
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            setChunkState(x, y, CHUNK_UNLOADED);
+            setChunkState(l, CHUNK_UNLOADED);
         }
-        return getChunkState(x, y);
+        return getChunkState(l);
     }
 
-    public void setChunkState(int x, int y, int state) {
-        if (chunkStates.get(x) == null) {
-            chunkStates.set(x, new ArrayList());
-        }
-        chunkStates.get(x).set(y, state);
+    public void setChunkState(Vector2i l, int state) {
+        chunkStates.put(l, state);
     }
 
     private void updateChunks() {
         Spatial n;
         float chunkSize = this.getChunkSize();
-        for (Integer[] i : loadedChunks) {// add in new chunks
-            if (getChunkState(i[0], i[1]) == CHUNK_UNLOADED) {
-                this.getGameInstance().addLazyTask(new LT_AddChunk(i[0], i[1], this));
+        for (Vector2i i : loadedChunks) {// add in new chunks
+            if (getChunkState(i) == CHUNK_UNLOADED) {
+                this.getGameInstance().addLazyTask(new LT_AddChunk(i, this));
             }
         }
-        for(int x = 0;x<chunkStates.size();x++){
-            for(int y = 0;y<chunkStates.get(x).size();y++){
-                if(getChunkState(x,y)==CHUNK_LOADED && loadedChunks.contains(new Integer[]{x,y})){
-                    getGameInstance().addLazyTask(new LT_RemoveChunk(x, y, this, chunks.get(i)));
-                }
+        int x, y;
+        for (Vector2i i : chunks.keySet()) {
+            if (this.getChunkState(i) == CHUNK_LOADED && !loadedChunks.contains(i)) {
+                getGameInstance().addLazyTask(new LT_RemoveChunk(i, this));
             }
         }
     }
 
     //each chunk identified by int[]{x,y}
-    private ArrayList<Integer[]> loadedChunks = new ArrayList();
-    public HashMap<Integer[], Spatial> chunks = new HashMap();
+    private ArrayList<Vector2i> loadedChunks = new ArrayList();
+    public HashMap<Vector2i, Spatial> chunks = new HashMap();
     private Node baseNode = new Node();
 
     public Node getBaseNode() {

@@ -58,16 +58,19 @@ public class Main extends SimpleApplication {
 
     }
     private DynamicMeshTurrain tur;
+    private boolean saveOnStop = false;
 
     @Override
     public void stop() {
-        BinaryExporter exporter = BinaryExporter.getInstance();
-        File file = new File("assets\\Models\\saves\\SceneSave.j3o");
-        System.out.println("Saving to " + file.getAbsolutePath());
-        try {
-            exporter.save(rootNode, file);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Error: Failed to save game!", ex);
+        if (saveOnStop) {
+            BinaryExporter exporter = BinaryExporter.getInstance();
+            File file = new File("assets\\Models\\saves\\SceneSave.j3o");
+            System.out.println("Saving to " + file.getAbsolutePath());
+            try {
+                exporter.save(rootNode, file);
+            } catch (IOException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Error: Failed to save game!", ex);
+            }
         }
         super.stop(); // continue quitting the game
     }
@@ -81,13 +84,15 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        lazyTasks.get(0).lazyExecute(this);
-        lazyTasks.remove(0);
-        //System.out.println(cam.getLocation().distance(camLocation));
-        if (cam.getLocation().distance(camLocation) > tur.getChunkSize()) {
-            System.out.println("Refocusing turrain");
-            camLocation = cam.getLocation().clone();
-            tur.setFocusLocation(camLocation);
+        if (lazyTasks.size() > 0) {
+            lazyTasks.get(0).lazyExecute(this);
+            lazyTasks.remove(0);
+            //System.out.println(cam.getLocation().distance(camLocation));
+            if (cam.getLocation().distance(camLocation) > tur.getChunkSize()) {
+                System.out.println("Refocusing turrain");
+                camLocation = cam.getLocation().clone();
+                tur.setFocusLocation(camLocation);
+            }
         }
     }
 
