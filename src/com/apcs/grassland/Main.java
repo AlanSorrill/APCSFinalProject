@@ -8,6 +8,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +37,16 @@ public class Main extends SimpleApplication {
         app.start();
     }
 
+    private void initSky() {
+        Texture east = getAssetManager().loadTexture("Skyboxes/ely_cloudtop/cloudtop_bk.png");
+        Texture south = getAssetManager().loadTexture("Skyboxes/ely_cloudtop/cloudtop_rt.png");
+        Texture west = getAssetManager().loadTexture("Skyboxes/ely_cloudtop/cloudtop_ft.png");
+        Texture north = getAssetManager().loadTexture("Skyboxes/ely_cloudtop/cloudtop_lf.png");
+        Texture up = getAssetManager().loadTexture("Skyboxes/ely_cloudtop/cloudtop_up.png");
+        Texture down = getAssetManager().loadTexture("Skyboxes/ely_cloudtop/cloudtop_dn.png");
+        getRootNode().attachChild(SkyFactory.createSky(getAssetManager(), west, east, north, south, up, down));
+    }
+
     @Override
     public void simpleInitApp() {
         WorldData.initWorld(false);
@@ -47,7 +59,7 @@ public class Main extends SimpleApplication {
         sun.setColor(ColorRGBA.White);
 
         rootNode.addLight(sun);
-
+        initSky();
         tur = new DynamicMeshTurrain(this);
         camLocation = cam.getLocation().clone();
         tur.setFocusLocation(camLocation);
