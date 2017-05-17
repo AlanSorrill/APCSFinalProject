@@ -10,6 +10,8 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +31,9 @@ public class Main extends SimpleApplication {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("nosettings")) {
                 AppSettings s = new AppSettings(true);
-                s.setResolution(1920, 1080);
+                Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+                s.setResolution(d.width,d.height);
+                s.setFullscreen(true);
                 app.setSettings(s);
                 app.setShowSettings(false);
             }
